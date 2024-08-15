@@ -2,4 +2,3 @@ const ORDER_BOOK_WS_URL = import.meta.env.VITE_ORDER_BOOK_WS_URL
 const LAST_PRICE_WS_URL = import.meta.env.VITE_LAST_PRICE_WS_URL
 
 export { LAST_PRICE_WS_URL, ORDER_BOOK_WS_URL }
-

@@ -6,3 +6,10 @@ export enum ErrorCode {
   USER_MSG_BUFFER_FULL = 1007,
   MAX_FAILED_ATTEMPTS = 1008
 }
+
+export enum ConnectionStatus {
+  CONNECTING = 0,
+  OPEN = 1,
+  CLOSING = 2,
+  CLOSED = 3
+}
