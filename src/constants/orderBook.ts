@@ -13,3 +13,5 @@ export enum ConnectionStatus {
   CLOSING = 2,
   CLOSED = 3
 }
+
+export const MAX_QUOTES_LENGTH = 8

@@ -1,3 +1,4 @@
+import { MAX_QUOTES_LENGTH } from '@/constants'
 import { atom } from 'jotai'
 
 export interface Quote {
@@ -17,9 +18,13 @@ export interface OrderBookData {
   symbol: string
 }
 
-export const buyQuotesAtom = atom<Quote[]>([])
+export const buyQuotesAtom = atom<Quote[]>(
+  Array.from({ length: MAX_QUOTES_LENGTH }, () => ({ price: '-', size: '-' }))
+)
 
-export const sellQuotesAtom = atom<Quote[]>([])
+export const sellQuotesAtom = atom<Quote[]>(
+  Array.from({ length: MAX_QUOTES_LENGTH }, () => ({ price: '-', size: '-' }))
+)
 
 export interface LastPriceData {
   price: number

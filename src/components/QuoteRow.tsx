@@ -34,10 +34,16 @@ const QuoteRow: React.FC<QuoteRowProps> = ({ quote, isBuy, total }) => {
       className={`grid grid-cols-3 p-2 ${getRowStyle()} hover:bg-[#1E3059] text-right font-bold`}
     >
       <div className={`${isBuy ? 'text-[#00b15d]' : 'text-[#FF5B5A]'}`}>
-        {Number(quote.price).toLocaleString()}
+        {Number.isNaN(Number(quote.price))
+          ? '-'
+          : Number(quote.price).toLocaleString()}
       </div>
-      <div>{Number(quote.size).toLocaleString()}</div>
-      <div>{total.toLocaleString()}</div>
+      <div>
+        {Number.isNaN(Number(quote.size))
+          ? '-'
+          : Number(quote.size).toLocaleString()}
+      </div>
+      <div>{Number.isNaN(total) ? '-' : total.toLocaleString()}</div>
     </div>
   )
 }

@@ -26,5 +26,16 @@
     "import/resolver": {
       "typescript": {}
     }
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.cjs"],
+      "parserOptions": {
+        "sourceType": "script" // CommonJS files use 'script'
+      },
+      "env": {
+        "node": true
+      }
+    }
+  ]
 }

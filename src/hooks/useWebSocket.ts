@@ -1,4 +1,9 @@
-import { ConnectionStatus } from '@/constants'
+import {
+  ConnectionStatus,
+  PING_MESSAGE,
+  PONG_MESSAGE,
+  SERVER_TIMEOUT_INTERVAL
+} from '@/constants'
 import usePersistentCallback from '@/hooks/usePersistentCallback'
 import { useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
@@ -37,6 +42,8 @@ export const useWebSocket = ({
   const attemptCount = useRef(0)
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeout = useRef<NodeJS.Timeout | null>(null)
+  const serverTimeout = useRef<NodeJS.Timeout | null>(null)
+  const connectionEstablished = useRef(false)
 
   const clearReconnectTimeout = () => {
     if (reconnectTimeout.current) {
@@ -51,15 +58,13 @@ export const useWebSocket = ({
       if (reconnectEnabled && attemptCount.current < maxReconnectAttempts) {
         reconnectTimeout.current = setTimeout(() => {
           attemptCount.current++
-          connect()
+          connectWs()
         }, reconnectInterval)
       }
     }
   }
 
-  const connect = usePersistentCallback((): void => {
-    attemptCount.current = 0
-    clearReconnectTimeout()
+  const connectWs = usePersistentCallback((): void => {
     if (wsRef.current) {
       wsRef.current.close()
     }
@@ -68,14 +73,21 @@ export const useWebSocket = ({
     setConnectionStatus(ConnectionStatus.CONNECTING)
 
     wsRef.current.onopen = (event) => {
+      clearReconnectTimeout()
       flushSync(() => {
         setConnectionStatus(ConnectionStatus.OPEN)
       })
       attemptCount.current = 0
       if (onOpen) onOpen(event)
+      sendMessage(PING_MESSAGE)
     }
 
     wsRef.current.onmessage = (event: WebSocketEventMap['message']) => {
+      if (event.data === PONG_MESSAGE) {
+        connectionEstablished.current = true
+        startPingPong()
+        return
+      }
       onMessage(event)
     }
 
@@ -96,9 +108,15 @@ export const useWebSocket = ({
     }
   })
 
+  const connect = usePersistentCallback((): void => {
+    attemptCount.current = 0
+    connectWs()
+  })
+
   const disconnect = usePersistentCallback((): void => {
     clearReconnectTimeout()
     if (wsRef.current) {
+      attemptCount.current = maxReconnectAttempts
       wsRef.current.close()
       wsRef.current = null
       setConnectionStatus(ConnectionStatus.CLOSED)
@@ -111,6 +129,22 @@ export const useWebSocket = ({
     } else {
       console.warn('WebSocket is not connected, unable to send message.')
     }
+  })
+
+  const startPingPong = usePersistentCallback(() => {
+    if (serverTimeout.current) {
+      clearTimeout(serverTimeout.current)
+    }
+    serverTimeout.current = setTimeout(() => {
+      if (connectionEstablished) {
+        connectionEstablished.current = false
+        sendMessage(PING_MESSAGE)
+        startPingPong()
+        return
+      }
+      // trigger reconnection
+      wsRef.current?.close()
+    }, SERVER_TIMEOUT_INTERVAL)
   })
 
   return {

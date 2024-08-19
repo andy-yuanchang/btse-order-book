@@ -119,7 +119,6 @@ export const useOrderBook = ({
           preSellQuotes.push({ price: sellUpdate[0], size: sellUpdate[1] })
         }
       })
-      console.log(preSellQuotes)
       return preSellQuotes
         .filter(({ size }) => +size !== 0)
         .sort((a, b) => Number(b.price) - Number(a.price))
