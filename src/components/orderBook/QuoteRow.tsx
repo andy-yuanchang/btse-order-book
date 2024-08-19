@@ -5,6 +5,7 @@ import React from 'react'
 interface QuoteRowProps {
   quote: Quote
   total: number
+  cumulativeSize: number
   quoteStyle: QuotesStyle
   isBuy?: boolean
 }
@@ -12,13 +13,16 @@ interface QuoteRowProps {
 const QuoteRow: React.FC<QuoteRowProps> = ({
   quote,
   quoteStyle,
+  cumulativeSize,
   total,
   isBuy
 }) => {
+  const ratio = cumulativeSize / total
+  const width = `${ratio * 100}%`
   return (
     <div
       className={cx(
-        'grid grid-cols-3 p-2 hover:bg-quote-hover text-right font-bold',
+        'grid grid-cols-3 hover:bg-quote-hover text-right font-bold',
         {
           'animate-buy-highlight': isBuy && quoteStyle.isNew,
           'animate-sell-highlight': !isBuy && quoteStyle.isNew
@@ -30,12 +34,24 @@ const QuoteRow: React.FC<QuoteRowProps> = ({
           ? '-'
           : Number(quote.price).toLocaleString()}
       </div>
-      <div>
+      <div
+        className={cx('', {
+          'animate-buy-highlight': quoteStyle.sizeChange === 'increase',
+          'animate-sell-highlight': quoteStyle.sizeChange === 'decrease'
+        })}
+      >
         {Number.isNaN(Number(quote.size))
           ? '-'
           : Number(quote.size).toLocaleString()}
       </div>
-      <div className={``}>
+      <div className="relative">
+        <div
+          className={cx(`absolute top-0 right-0 bottom-0`, {
+            'bg-buy-quote-size': isBuy,
+            'bg-sell-quote-size': !isBuy
+          })}
+          style={{ width }}
+        />
         {Number.isNaN(total) ? '-' : total.toLocaleString()}
       </div>
     </div>

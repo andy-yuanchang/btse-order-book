@@ -28,27 +28,35 @@ export const sellQuotesAtom = atom<Quote[]>(
 
 export interface QuotesStyle {
   isNew: boolean
-  sizeChange: 'increase' | 'decrease'
+  sizeChange: 'increase' | 'decrease' | 'not-changed'
 }
 
 let previousBuyQuotes: Quote[] | null
 export const buyQuotesStyleAtom = atom<QuotesStyle[]>((get) => {
   const quotes = get(buyQuotesAtom)
-  const styles: QuotesStyle[] = quotes.map((quote, index) => {
-    const prevQuote = previousBuyQuotes?.[index]
-    const isNew = !prevQuote || prevQuote.price !== quote.price
-    const sizeChange =
-      prevQuote && Number(prevQuote.size) < Number(quote.size)
-        ? 'increase'
-        : 'decrease'
+  const styles: QuotesStyle[] = quotes.map((quote) => {
+    if (previousBuyQuotes) {
+      const index = previousBuyQuotes.findIndex((x) => x.price === quote.price)
+      const isNew = index < 0
+      let sizeChange: QuotesStyle['sizeChange'] = 'not-changed'
+      if (!isNew && quote.size > previousBuyQuotes[index].size) {
+        sizeChange = 'increase'
+      } else if (!isNew && quote.size < previousBuyQuotes[index].size) {
+        sizeChange = 'decrease'
+      }
 
+      return {
+        isNew,
+        sizeChange
+      }
+    }
     return {
-      isNew,
-      sizeChange
+      isNew: true,
+      sizeChange: 'not-changed'
     }
   })
 
-  previousBuyQuotes = quotes
+  previousBuyQuotes = quotes.map((quote) => ({ ...quote }))
 
   return styles
 })
@@ -56,21 +64,37 @@ export const buyQuotesStyleAtom = atom<QuotesStyle[]>((get) => {
 let previousSellQuotes: Quote[] | null
 export const sellQuotesStyleAtom = atom<QuotesStyle[]>((get) => {
   const quotes = get(sellQuotesAtom)
-  const styles: QuotesStyle[] = quotes.map((quote, index) => {
-    const prevQuote = previousSellQuotes?.[index]
-    const isNew = !prevQuote || prevQuote.price !== quote.price
-    const sizeChange =
-      prevQuote && Number(prevQuote.size) < Number(quote.size)
-        ? 'increase'
-        : 'decrease'
+  const styles: QuotesStyle[] = quotes.map((quote) => {
+    if (previousSellQuotes) {
+      const index = previousSellQuotes.findIndex((x) => x.price === quote.price)
+      const isNew = index < 0
+      let sizeChange: QuotesStyle['sizeChange'] = 'not-changed'
+      if (
+        !isNew &&
+        previousSellQuotes &&
+        quote.size > previousSellQuotes[index].size
+      ) {
+        sizeChange = 'increase'
+      } else if (
+        !isNew &&
+        previousSellQuotes &&
+        quote.size < previousSellQuotes[index].size
+      ) {
+        sizeChange = 'decrease'
+      }
 
+      return {
+        isNew,
+        sizeChange
+      }
+    }
     return {
-      isNew,
-      sizeChange
+      isNew: true,
+      sizeChange: 'not-changed'
     }
   })
 
-  previousSellQuotes = quotes
+  previousSellQuotes = quotes.map((quote) => ({ ...quote }))
 
   return styles
 })

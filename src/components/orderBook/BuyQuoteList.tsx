@@ -12,24 +12,20 @@ const BuyQuoteList: React.FC = () => {
       .reduce((acc, q) => acc + Number(q.size), 0)
     return { ...quote, total: cumulativeSize }
   })
-
+  const totalSize = quotes.reduce((acc, quote) => acc + Number(quote.size), 0)
   return (
-    <div>
-      <div className="grid grid-cols-3 text-right">
-        <div className="text-quote-head text-sm">Price(USD)</div>
-        <div className="text-quote-head text-sm">Size</div>
-        <div className="text-quote-head text-sm">Total</div>
-      </div>
+    <>
       {calculatedQuotes.map((quote, index) => (
         <QuoteRow
           key={index}
           quote={quote}
-          total={quote.total}
+          cumulativeSize={quote.total}
+          total={totalSize}
           quoteStyle={styles[index]}
           isBuy
         />
       ))}
-    </div>
+    </>
   )
 }
 

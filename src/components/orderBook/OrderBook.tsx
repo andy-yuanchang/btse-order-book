@@ -29,6 +29,11 @@ const OrderBook: React.FC = () => {
     <div className="bg-background text-default p-4">
       <h1 className="text-xl">Order Book</h1>
       <div className="grid grid-cols-1 gap-4 mt-4">
+        <div className="grid grid-cols-3 text-right">
+          <div className="text-quote-head text-sm">Price(USD)</div>
+          <div className="text-quote-head text-sm">Size</div>
+          <div className="text-quote-head text-sm">Total</div>
+        </div>
         <SellQuoteList />
         <LastPrice />
         <BuyQuoteList />
