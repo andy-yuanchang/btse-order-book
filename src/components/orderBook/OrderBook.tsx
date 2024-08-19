@@ -1,9 +1,8 @@
-import { buyQuotesAtom, sellQuotesAtom } from '@/atoms/orderBook'
-import LastPrice from '@/components/LastPrice'
-import QuoteList from '@/components/QuoteList'
+import BuyQuoteList from '@/components/orderBook/BuyQuoteList'
+import LastPrice from '@/components/orderBook/LastPrice'
+import SellQuoteList from '@/components/orderBook/SellQuoteList'
 import { useLastPrice } from '@/hooks/useLastPrice'
 import { useOrderBook } from '@/hooks/useOrderBook'
-import { useAtomValue } from 'jotai'
 import React, { useEffect } from 'react'
 
 const OrderBook: React.FC = () => {
@@ -11,8 +10,6 @@ const OrderBook: React.FC = () => {
     useLastPrice({ symbol: 'BTCPFC' })
   const { connect: connectOrderBook, disconnect: disconnectOrderBook } =
     useOrderBook({ operation: 'subscribe', action: 'update', symbol: 'BTCPFC' })
-  const buyQuotes = useAtomValue(buyQuotesAtom)
-  const sellQuotes = useAtomValue(sellQuotesAtom)
 
   useEffect(() => {
     connectLastPrice()
@@ -32,9 +29,9 @@ const OrderBook: React.FC = () => {
     <div className="bg-background text-default p-4">
       <h1 className="text-xl">Order Book</h1>
       <div className="grid grid-cols-1 gap-4 mt-4">
-        <QuoteList quotes={sellQuotes} isBuy={false} />
+        <SellQuoteList />
         <LastPrice />
-        <QuoteList quotes={buyQuotes} isBuy={true} />
+        <BuyQuoteList />
       </div>
     </div>
   )

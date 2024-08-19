@@ -1,5 +1,5 @@
 import ErrorBoundary from '@/components/ErrorBoundary'
-import OrderBook from './components/OrderBook'
+import OrderBook from '@/components/orderBook/OrderBook'
 
 export default function App() {
   return (

@@ -1,7 +1,7 @@
 import { lastPriceAtom, priceStateAtom } from '@/atoms/orderBook'
+import ArrowIcon from '@/components/common/ArrowIcon'
 import cx from 'classnames'
 import { useAtomValue } from 'jotai'
-import ArrowIcon from './ArrowIcon'
 
 const LastPrice: React.FC = () => {
   const lastPrice = useAtomValue(lastPriceAtom)
@@ -11,8 +11,8 @@ const LastPrice: React.FC = () => {
       className={cx(
         'p-4 w-full mx-auto flex justify-center items-center gap-1',
         {
-          'text-buy-quote bg-buy-bar': priceState === 'higher',
-          'text-sell-quote bg-sell-bar': priceState === 'lower',
+          'text-buy-quote bg-buy-quote-size': priceState === 'higher',
+          'text-sell-quote bg-sell-quote-size': priceState === 'lower',
           'text-default bg-quote-head': priceState === 'equivalent'
         }
       )}
