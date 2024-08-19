@@ -52,7 +52,7 @@ const QuoteRow: React.FC<QuoteRowProps> = ({
           })}
           style={{ width }}
         />
-        {Number.isNaN(total) ? '-' : total.toLocaleString()}
+        {Number.isNaN(cumulativeSize) ? '-' : cumulativeSize.toLocaleString()}
       </div>
     </div>
   )
