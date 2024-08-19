@@ -2,9 +2,7 @@
 
 An order book simulation using React + Vite.
 
-<video width="320" height="240" Controls>
-  <source src="/docs/demo.mov" type="video/mp4">
-</video>
+<video width="320" height="240" src="/docs/demo.mp4" controls></video>
 
 Demo Link: https://btse-order-book.vercel.app/
 
